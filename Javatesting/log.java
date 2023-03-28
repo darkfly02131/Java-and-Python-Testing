@@ -1,7 +1,7 @@
 package Javatesting;
 
 import java.util.Scanner;
-
+//comment
 public class log {
     public static void main(String[] args) {
         Scanner  keyboard = new Scanner(System.in);
