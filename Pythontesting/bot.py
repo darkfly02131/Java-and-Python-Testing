@@ -143,7 +143,7 @@ async def bal(ctx):
     result = cursor.fetchone()
 
     if result:
-        disord_id , username, balance = result
+        discord_id , username, balance = result
     else: 
         username = ctx.author.name
         balance = 0
@@ -170,20 +170,20 @@ async def bal(ctx):
 
 #Create a bot command that will allow a user to buy something from the store.
 #Q: Ho
-@bot.command()
-async def buy(ctx, item):
-    user_id = str(ctx.author.id)
-    if user_id not in user_coins:
-        user_coins[user_id] = 0
-    if item not in store_items:
-        await ctx.send("That item is not in the store!")
-        return
-    if user_coins[user_id] < store_items[item]:
-        await ctx.send("You do not have enough coins to buy that!")
-        return
-    user_coins[user_id] -= store_items[item]
-    await ctx.send("You have bought " + item + "!")
-    await ctx.send("Your new balance is " + str(user_coins[user_id]) + " Cat Coins!")
+# @bot.command()
+# async def buy(ctx, item):
+#     user_id = str(ctx.author.id)
+#     if user_id not in user_coins:
+#         user_coins[user_id] = 0
+#     if item not in store_items:
+#         await ctx.send("That item is not in the store!")
+#         return
+#     if user_coins[user_id] < store_items[item]:
+#         await ctx.send("You do not have enough coins to buy that!")
+#         return
+#     user_coins[user_id] -= store_items[item]
+#     await ctx.send("You have bought " + item + "!")
+#     await ctx.send("Your new balance is " + str(user_coins[user_id]) + " Cat Coins!")
 
 
 
@@ -200,72 +200,105 @@ async def buy(ctx, item):
     #Level 9 is 0.01% for a 100x multiplier
 
 
-    # @bot.command(ctx)
-    # async def gamblin(ctx, level: int, amount: int):
-    #     user_id = str(ctx.author.id)
-    #     if user_id not in user_coins:
-    #         await ctx.send("You don't have any coins to gamble.")
-    #         return
-    #     if amount <=0 or amount > user_coins[user_id]:
-    #         await ctx.send("Invalid amount to gamble.")
-    #         return
+@bot.command()
+async def gamble(ctx, level: int, amount: int):
+    user_id = str(ctx.author.id)
+    connection = sqlite3.connect(db_file_path)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT balance FROM users WHERE discord_id = ?", (user_id,))
+    result = cursor.fetchone()
+
+    if result:
+        user_coins = result[0]
+    else:
+        user_coins = 0
+        await ctx.send("You don't have enough coins to gamble.")
+        connection.close()
+        return
+    if user_id not in user_coins:
+        await ctx.send("You don't have any coins to gamble.")
+        return
+    if amount <=0 or amount > user_coins[user_id]:
+        await ctx.send("Invalid amount to gamble.")
+        return
+    levels = {
+        1: {'chance': 80, 'multiplier': 1.1},
+        2: {'chance': 50, 'multiplier': 1.5},
+        3: {'chance': 30, 'multiplier': 2},
+        4: {'chance': 20, 'multiplier': 3},
+        5: {'chance': 10, 'multiplier': 5},
+        6: {'chance': 5, 'multiplier': 10},
+        7: {'chance': 0.5, 'multiplier': 20},
+        8: {'chance': 0.1, 'multiplier': 50},
+        9: {'chance': 0.01, 'multiplier': 100}
+        }
+    
+
+    # embed = discord.Embed(title="Select a Gambling Level", description="Please select a level to gamble on.", color=0xeee657)
+    # for level, info in levels.items():
+    #     embed.add_field(name=f"Level {level}", value=f"Winning Chance: {info['chance']}%, Multiplier: {info['multiplier']}x", inline=False)
+    #     await ctx.send(embed=embed)
+    await ctx.send("Please select the level that you want to gamble on (1-9):")
+
+    if level not in levels:
+        await ctx.send("Invalid level to gamble.")
+        return 
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel and m.content.isdigit() 
+
+    await ctx.send("Please select the level that you want to gamble on (1-9:")
+    try:
+        level_message = await ctx.bot.wait_for('message', check=check, timeout=30.0)
+        selected_level = int(level_message.content)
+    except asyncio.TimeoutError:
+        await ctx.send("You took too long to respond.")
+        return
         
-    #     levels = {
-    #         1: {80, 1.1},
-    #         2: {50, 1.5},
-    #         3: {30, 2},
-    #         4: {20, 3},
-    #         5: {10, 5},
-    #         6: {5, 10},
-    #         7: {0.5, 20},
-    #         8: {0.1, 50},
-    #         9: {0.01, 100}
-    #     }
-
-    #     await ctx.send("Please select he level that you want to gamble on (1-9) and the amount of coins that you want to gamble.")
-
-    #     def  check(m):
-    #         return m.author == ctx.author and m.content.isdigit() and 1 <= int(m.content) <= 9
+    await ctx.send("Please select the amount you want to gamble?")
+    try:
+        amount_message = await ctx.bot.wait_for('message', check=check, timeout=30.0)
+        selected_amount = int(amount_message.content)
+    except asyncio.TimeoutError:
+        await ctx.send("You took too long to respond.")
+        return
 
 
-    #     if level not in levels:
-    #         await ctx.send("Invalid level to gamble.")
-    #         return 
-        
+    winning_chance, multiplier = levels[selected_level]
+    result = random.randint(1, 1000)
 
-    #     try:
-    #         level_message = await ctx.bot.wait_for('message', check=check, timeout=30.0)
-    #         selected_level = int(level_message.content)
-    #     except asyncio.TimeoutError:
-    #         await ctx.send("You took too long to respond.")
-    #         return
-        
-    #     winning_chance, multiplier = levels[level]
+    if result <= winning_chance:
+        winnings = int(selected_amount * multiplier)
+        user_coins[user_id] += winnings
+        await ctx.send(f"Congratulations! You won {winnings} coins!")
+    else:
+        user_coins[user_id] -= selected_amount
+        await ctx.send("Sorry, you lost the gamble. Good luck next time kid.")
 
-    #     if random.randint(1, 1000) <= winning_chance * 100:
-    #         winnings = int(amount * multiplier)
-    #         user_coins[user_id] += winnings
-    #         await ctx.send(f"Congratulations!!! You won {winnings} coins! Your new balance is {user_coins[user_id]} coins!")
-    #     else:
-    #         user_coins[user_id] -= amount
-    #         await ctx.send(f"Sorry, you lost {amount} coins. Your new balance is {user_coins[user_id]} coins!")
+#Q: Buddy c, why doesn't this command show up as a command in the bot?
+#A: You need to add the command to the bot. Add this line to the bottom of your code:
+#bot.add_command(gamble)
+#Q: so where the bot.run is?
+#Q: that did absolutely nothing
+#A: You need to add the command to the bot. Add this line to the bottom of your code:
+#Q: I did and i says that the gamble is not defined
+#
+
+
+# @bot.command()
+
+# async def womp(ctx):
+#     while True:
+#         await ctx.send("Womp Womp")
+#         await asyncio.sleep(5)
+#         break    
 
     
-       
-@bot.command()
+# @bot.command()
 
-async def womp(ctx):
-    while True:
-        await ctx.send("Womp Womp")
-        await asyncio.sleep(5)
-        break    
-
-    
-@bot.command()
-
-async def gif(ctx):
-    gif_url = 'https://media.tenor.com/34qt8w3xnHEAAAAd/angy-angry.gif'
-    await ctx.send(discord.File(gif_url))
+# async def gif(ctx):
+#     gif_url = 'https://media.tenor.com/34qt8w3xnHEAAAAd/angy-angry.gif'
+#     await ctx.send(discord.File(gif_url))
 
 
 
