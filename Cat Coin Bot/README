@@ -1,0 +1,30 @@
+#  Cat Coin Bot   Date: 8/13/2023                                                                                                       
+# =======================================================================================================================================
+# A Discord Bot that works as a sort log in and get a coin which you can then use the in shop.
+# The prefix for the bot is the '!' 
+
+# Currently the commands are a register, balance, gen for generating the coin, and the gambling feature.
+
+# In addition to this, the program is linked up to a database through SQLITE3. 
+# The downside at this current point is that the bot has to be run locally unfortunately. 
+# The general idea is that a user would connect each day to get one coin, but the way that they can get more coins is through Gambling.
+# There are 9 levels which at this current point is the following:
+# ===================================================
+# Level 1 is 80% for a 1.1x multiplier
+# Level 2 is 50% for a 1.5x multiplier
+# Level 3 is 30% for a 2x multiplier
+#Level 4 is 20% for a 3x multiplier
+# Level 5 is 10% for a 5x multiplier
+# Level 6 is 5% for a 10x multiplier
+# Level 7 is 0.5% for a 20x multiplier
+# Level 8 is 0.1% for a 50x multiplier
+# Level 9 is 0.01% for a 100x multiplier
+# ===================================================
+#To Do List:
+#Currently, the display for the gambling system does not work, but in due time it will hopefully work.
+#I have plans to put a 24hr timer on the !gen command.
+#Additiionally, I also have to implement the buy command and the shop command.
+# As of this current moment, I do not know what exactly is going to be in the shop.
+# However, I also have plans to add a command that will put stuff into the database for new items.
+# That's all that I have currently, I wish anyone who reads this an amazing rest of your day see ya!
+# - Zachary Lord
