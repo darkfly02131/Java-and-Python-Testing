@@ -24,16 +24,32 @@ import sqlite3
 
 #
 
+
 intents = discord.Intents.default()
 intents.message_content= True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+allowed_role_ids= [1090064649384374283, 1143715270045749329, 1090048857439748167, 1143714583262011422, 1143331534070349905, 579021922147368960 ]
 
+def has_allowed_role(ctx):
+    return any(role.id in allowed_role_ids for role in ctx.author.roles)
+
+def role_check():
+    def predicate(ctx):
+        return has_allowed_role(ctx)
+    return commands.check(predicate)
+
+
+def specific_channel():
+    def predicate(ctx):
+        return ctx.channel.id == 1145856899917549576
+    return commands.check(predicate)
 #Database connection
 db_file_path = 'D:\\File\\Test.db'
 
-
+#Q: buddy c what am I doing wrong
+#Q: adding bot.addcommand does nothing buddy c
 
 
 
@@ -56,6 +72,8 @@ async def on_ready():
 
 
 @bot.command()
+@role_check()
+@specific_channel()
 async def register(ctx):
     user_id = ctx.author.id
     connection = sqlite3.connect(db_file_path)
@@ -92,6 +110,8 @@ async def register(ctx):
 #Q: I am calling it through the connection
 #Generate Coins for all users
 @bot.command()
+@role_check()
+@specific_channel()
 async def gen(ctx):
     user_id = str(ctx.author.id)
 
@@ -134,6 +154,8 @@ async def daily_reset():
     gen()
 
 @bot.command()
+@role_check()
+@specific_channel()
 async def bal(ctx):
     user_id = str(ctx.author.id)
 
@@ -201,6 +223,8 @@ async def bal(ctx):
 
 
 @bot.command()
+@role_check()
+@specific_channel()
 async def gamble(ctx, level: int, amount: int):
     user_id = str(ctx.author.id)
     connection = sqlite3.connect(db_file_path)
@@ -275,6 +299,10 @@ async def gamble(ctx, level: int, amount: int):
         user_coins[user_id] -= selected_amount
         await ctx.send("Sorry, you lost the gamble. Good luck next time kid.")
 
+
+
+
+
 #Q: Buddy c, why doesn't this command show up as a command in the bot?
 #A: You need to add the command to the bot. Add this line to the bottom of your code:
 #bot.add_command(gamble)
@@ -303,4 +331,21 @@ async def gamble(ctx, level: int, amount: int):
 
 
 
+
 bot.run('MTEzNzg4MzY1MzQ0ODQwMTA1Nw.GydjoK.9PczQvn-DvsQFiAxtg-ZRetiR7gqTmrFtkY8Rc')
+
+
+# Officer Role ID: 1090064649384374283
+# Co-founder role ID: 1143715270045749329
+# Founder Role ID:  1090048857439748167
+# Bot Stuff ID: 1143714583262011422
+# Homies Role ID: 1143331534070349905
+#
+#
+#
+#Q: Buddy c, why am I getting this error?
+#Q: So I add the role check to the bot?
+#A: You need to add the command to the bot. Add this line to the bottom of your code:
+#bot.add_command(gamble)
+#Q: for all of the commands?
+
