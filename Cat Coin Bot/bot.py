@@ -52,7 +52,22 @@ db_file_path = 'D:\\File\\Test.db'
 #Q: adding bot.addcommand does nothing buddy c
 
 
+connection = sqlite3.connect(db_file_path)
+cursor = connection.cursor()
+cursor.execute(''' 
+CREATE TABLE IF NOT EXISTS marketplace (
+    item_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    price INTEGER NOT NULL,
+    description TEXT NOT NULL
+);              
+''')
 
+
+
+
+connection.commit()
+connection.close()
 
 
 
@@ -181,6 +196,30 @@ async def bal(ctx):
 # async def end(ctx):
 #     bot.close()
 
+
+#Store Functions
+# Make a new table on the database called marketplace where items will be stored 
+# The three columns will be item id, name, item price, and item description
+# Item id will be an Integer Primary key, name will be text, item price will be an integer, and item description will be text
+# Add a command to add items to the marketplace
+# This command will take in the name, price, and description of the item and add it to the marketplace table
+# Add a command that shows the latest items inside the market
+# this command will show all the available items in the marketplace table
+# Maybe add something where the items have a limited supply and when they are bought they are removed from the marketplace table
+# Add a command to buy items from the marketplace
+# This command will take in the item id and the amount of the item that you want to buy
+# This command will check if the user has enough coins to buy the item and if they do it will subtract the amount of coins from the user and add the item to the user's inventory
+# Create a user inventory 
+#Maybe add a system where people can sell item into the marketplace 
+# Create a user inventory table where it stores relationships between the user and the items they own
+# The table will look like this:
+# CREATE TABLE user_inventory (
+# user_id INTEGER,
+# item_id INTEGER,
+# PRIMARY KEY (user_id, item_id),
+# FOREIGN KEY (user_id) REFERENCES users(discord_id),
+# FOREIGN KEY (item_id) REFERENCES marketplace(item_id)
+#);
 
 # @bot.command()
 
