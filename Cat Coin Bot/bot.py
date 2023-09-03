@@ -30,20 +30,20 @@ intents.message_content= True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-allowed_role_ids= [1090064649384374283, 1143715270045749329, 1090048857439748167, 1143714583262011422, 1143331534070349905, 579021922147368960 ]
+# allowed_role_ids= [1090064649384374283, 1143715270045749329, 1090048857439748167, 1143714583262011422, 1143331534070349905, 579021922147368960 ]
 
-def has_allowed_role(ctx):
-    return any(role.id in allowed_role_ids for role in ctx.author.roles)
+# def has_allowed_role(ctx):
+#     return any(role.id in allowed_role_ids for role in ctx.author.roles)
 
-def role_check():
-    def predicate(ctx):
-        return has_allowed_role(ctx)
-    return commands.check(predicate)
+# def role_check():
+#     def predicate(ctx):
+#         return has_allowed_role(ctx)
+#     return commands.check(predicate)
 
 
 def specific_channel():
     def predicate(ctx):
-        return ctx.channel.id == 1145856899917549576
+        return ctx.channel.id == 1147568457735471184
     return commands.check(predicate)
 #Database connection
 db_file_path = 'D:\\File\\Test.db'
@@ -52,22 +52,22 @@ db_file_path = 'D:\\File\\Test.db'
 #Q: adding bot.addcommand does nothing buddy c
 
 
-connection = sqlite3.connect(db_file_path)
-cursor = connection.cursor()
-cursor.execute(''' 
-CREATE TABLE IF NOT EXISTS marketplace (
-    item_id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    price INTEGER NOT NULL,
-    description TEXT NOT NULL
-);              
-''')
+# connection = sqlite3.connect(db_file_path)
+# cursor = connection.cursor()
+# cursor.execute(''' 
+# CREATE TABLE IF NOT EXISTS marketplace (
+#     item_id INTEGER PRIMARY KEY,
+#     name TEXT NOT NULL,
+#     price INTEGER NOT NULL,
+#     description TEXT NOT NULL
+# );              
+# ''')
 
 
 
 
-connection.commit()
-connection.close()
+# connection.commit()
+# connection.close()
 
 
 
@@ -87,7 +87,7 @@ async def on_ready():
 
 
 @bot.command()
-@role_check()
+# @role_check()
 @specific_channel()
 async def register(ctx):
     user_id = ctx.author.id
@@ -125,7 +125,7 @@ async def register(ctx):
 #Q: I am calling it through the connection
 #Generate Coins for all users
 @bot.command()
-@role_check()
+# @role_check()
 @specific_channel()
 async def gen(ctx):
     user_id = str(ctx.author.id)
@@ -169,7 +169,7 @@ async def daily_reset():
     gen()
 
 @bot.command()
-@role_check()
+# @role_check()
 @specific_channel()
 async def bal(ctx):
     user_id = str(ctx.author.id)
@@ -262,7 +262,7 @@ async def bal(ctx):
 
 
 @bot.command()
-@role_check()
+# @role_check()
 @specific_channel()
 async def gamble(ctx, level: int, amount: int):
     user_id = str(ctx.author.id)
@@ -337,6 +337,61 @@ async def gamble(ctx, level: int, amount: int):
     else:
         user_coins[user_id] -= selected_amount
         await ctx.send("Sorry, you lost the gamble. Good luck next time kid.")
+
+#Marketplace start:
+#Create a bot command that will allow a user to sell something to the marketplace
+#The bot command will take in the name, price, and description of the item and add it to the marketplace table
+#If a user buys something it will be stored in the user inventory table
+# A user must have something to sell from their inventory in order for the command to work:
+# The bot command will take in the item id and the amount of the item that you want to sell
+# This command will check if the user has enough of the item to sell and if they do it will subtract the amount of items from the user and add the item to the marketplace
+
+
+@bot.command()
+@specific_channel()
+
+async def inventory(ctx, item_id, item_name, quantity):
+    user_id = str(ctx.author.id)
+    connection = sqlite3.connect(db_file_path)
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM user_inventory WHERE user_id = ? AND item_id = ?", (user_id, item_id))
+    result = cursor.fetchone()
+
+    if result:
+        cursor.execute("UPDATE user_inventory SET quantity = quantity + ? WHERE user_id = ? AND item_id = ?", (quantity, user_id, item_id))
+    else:   
+        cursor.execute("INSERT INTO user_inventory (user_id, item_id, quantity) VALUES (?, ?, ?)", (user_id, item_id, quantity))
+    connection.commit()
+    connection.close()
+    await ctx.send(f"Added {quantity} {item_name} to your inventory!")
+
+
+
+@bot.command()
+@specific_channel()
+async def marketplace(ctx):
+    connection = sqlite3.connect(db_file_path)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM marketplace")
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    if not rows:
+        await ctx.send("There are no items in the marketplace!")
+        return
+    
+    m_data = "\n".join([f"Item ID: {row[0]}, Name: {row[1]}, Price: {row[2]} Cat Coins\nDescription: {row[3]}\n" for row in rows])
+    await ctx.send("Welcome to the Cat Coin Marketplace!\n\nAvailable Items:\n" + m_data)
+
+
+
+    
+
+
+
+
 
 
 
