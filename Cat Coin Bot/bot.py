@@ -10,6 +10,7 @@
 # 6. when you buy from the store. You can use a command to show a little image of what you bought in a menu/ inventory
 # 7. Add a way for people to give each other coins
 # 8. Add a way to gamble coins
+#This bot is essentially an inside joke for a discord server that I was in. There is no use case for it. It quite honestly a joke bot.
 
 
 
@@ -47,9 +48,6 @@ def specific_channel():
     return commands.check(predicate)
 #Database connection
 db_file_path = 'D:\\File\\Test.db'
-
-#Q: buddy c what am I doing wrong
-#Q: adding bot.addcommand does nothing buddy c
 
 
 # connection = sqlite3.connect(db_file_path)
@@ -120,9 +118,6 @@ async def register(ctx):
         await ctx.send("Sorry, you didn't reply in time!")
     
 
-#Q: buddy c what am I doing wrong
-#Q: and how is it that I'm not using it?
-#Q: I am calling it through the connection
 #Generate Coins for all users
 @bot.command()
 # @role_check()
@@ -397,49 +392,8 @@ async def marketplace(ctx):
 
 
 
-#Q: Buddy c, why doesn't this command show up as a command in the bot?
-#A: You need to add the command to the bot. Add this line to the bottom of your code:
-#bot.add_command(gamble)
-#Q: so where the bot.run is?
-#Q: that did absolutely nothing
-#A: You need to add the command to the bot. Add this line to the bottom of your code:
-#Q: I did and i says that the gamble is not defined
-#
-
-
-# @bot.command()
-
-# async def womp(ctx):
-#     while True:
-#         await ctx.send("Womp Womp")
-#         await asyncio.sleep(5)
-#         break    
-
-    
-# @bot.command()
-
-# async def gif(ctx):
-#     gif_url = 'https://media.tenor.com/34qt8w3xnHEAAAAd/angy-angry.gif'
-#     await ctx.send(discord.File(gif_url))
-
-
-
 
 
 bot.run('MTEzNzg4MzY1MzQ0ODQwMTA1Nw.GydjoK.9PczQvn-DvsQFiAxtg-ZRetiR7gqTmrFtkY8Rc')
 
-
-# Officer Role ID: 1090064649384374283
-# Co-founder role ID: 1143715270045749329
-# Founder Role ID:  1090048857439748167
-# Bot Stuff ID: 1143714583262011422
-# Homies Role ID: 1143331534070349905
-#
-#
-#
-#Q: Buddy c, why am I getting this error?
-#Q: So I add the role check to the bot?
-#A: You need to add the command to the bot. Add this line to the bottom of your code:
-#bot.add_command(gamble)
-#Q: for all of the commands?
 
