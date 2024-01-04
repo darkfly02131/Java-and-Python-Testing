@@ -10,6 +10,8 @@
 # 6. when you buy from the store. You can use a command to show a little image of what you bought in a menu/ inventory
 # 7. Add a way for people to give each other coins
 # 8. Add a way to gamble coins
+# This bot is essentially a system for an inside joke in a discord server that I was in.
+#There is no use case for this bot, it is quite literally a joke bot.
 
 
 
@@ -87,9 +89,7 @@ async def register(ctx):
         await ctx.send("Sorry, you didn't reply in time!")
     
 
-#Q: buddy c what am I doing wrong
-#Q: and how is it that I'm not using it?
-#Q: I am calling it through the connection
+
 #Generate Coins for all users
 @bot.command()
 async def gen(ctx):
@@ -168,8 +168,7 @@ async def bal(ctx):
 
 
 
-#Create a bot command that will allow a user to buy something from the store.
-#Q: Ho
+#Work In Progresss buy command
 # @bot.command()
 # async def buy(ctx, item):
 #     user_id = str(ctx.author.id)
@@ -234,7 +233,7 @@ async def gamble(ctx, level: int, amount: int):
         9: {'chance': 0.01, 'multiplier': 100}
         }
     
-
+    #Work In progress:
     # embed = discord.Embed(title="Select a Gambling Level", description="Please select a level to gamble on.", color=0xeee657)
     # for level, info in levels.items():
     #     embed.add_field(name=f"Level {level}", value=f"Winning Chance: {info['chance']}%, Multiplier: {info['multiplier']}x", inline=False)
@@ -275,30 +274,8 @@ async def gamble(ctx, level: int, amount: int):
         user_coins[user_id] -= selected_amount
         await ctx.send("Sorry, you lost the gamble. Good luck next time kid.")
 
-#Q: Buddy c, why doesn't this command show up as a command in the bot?
-#A: You need to add the command to the bot. Add this line to the bottom of your code:
-#bot.add_command(gamble)
-#Q: so where the bot.run is?
-#Q: that did absolutely nothing
-#A: You need to add the command to the bot. Add this line to the bottom of your code:
-#Q: I did and i says that the gamble is not defined
-#
 
 
-# @bot.command()
-
-# async def womp(ctx):
-#     while True:
-#         await ctx.send("Womp Womp")
-#         await asyncio.sleep(5)
-#         break    
-
-    
-# @bot.command()
-
-# async def gif(ctx):
-#     gif_url = 'https://media.tenor.com/34qt8w3xnHEAAAAd/angy-angry.gif'
-#     await ctx.send(discord.File(gif_url))
 
 
 
