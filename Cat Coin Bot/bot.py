@@ -394,6 +394,6 @@ async def marketplace(ctx):
 
 
 
-bot.run('MTEzNzg4MzY1MzQ0ODQwMTA1Nw.GydjoK.9PczQvn-DvsQFiAxtg-ZRetiR7gqTmrFtkY8Rc')
+bot.run('')
 
 
