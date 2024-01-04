@@ -8,7 +8,8 @@
 # In addition to this, the program is linked up to a database through SQLITE3. 
 # The downside at this current point is that the bot has to be run locally unfortunately. 
 # The general idea is that a user would connect each day to get one coin, but the way that they can get more coins is through Gambling.
-# There are 9 levels which at this current point is the following:
+# Work in Progress: 
+#There are 9 levels which at this current point is the following:
 # ===================================================
 # Level 1 is 80% for a 1.1x multiplier
 # Level 2 is 50% for a 1.5x multiplier
